@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fxyz.chebao.mapper.CarManufacturerTempMapper" >
+  <resultMap id="BaseResultMap" type="com.fxyz.chebao.pojo.carSpider.CarManufacturerTemp" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="brand_id" property="brandId" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="orl" property="orl" jdbcType="VARCHAR" />
+    <result column="inter_id" property="interId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, brand_id, name, orl, inter_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from car_manufacturer_temp
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from car_manufacturer_temp
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.fxyz.chebao.pojo.carSpider.CarManufacturerTemp" >
+    insert into car_manufacturer_temp (id, brand_id, name, 
+      orl, inter_id)
+    values (#{id,jdbcType=INTEGER}, #{brandId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
+      #{orl,jdbcType=VARCHAR}, #{interId,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.fxyz.chebao.pojo.carSpider.CarManufacturerTemp" >
+    insert into car_manufacturer_temp
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="brandId != null" >
+        brand_id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="orl != null" >
+        orl,
+      </if>
+      <if test="interId != null" >
+        inter_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="brandId != null" >
+        #{brandId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="orl != null" >
+        #{orl,jdbcType=VARCHAR},
+      </if>
+      <if test="interId != null" >
+        #{interId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fxyz.chebao.pojo.carSpider.CarManufacturerTemp" >
+    update car_manufacturer_temp
+    <set >
+      <if test="brandId != null" >
+        brand_id = #{brandId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="orl != null" >
+        orl = #{orl,jdbcType=VARCHAR},
+      </if>
+      <if test="interId != null" >
+        inter_id = #{interId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fxyz.chebao.pojo.carSpider.CarManufacturerTemp" >
+    update car_manufacturer_temp
+    set brand_id = #{brandId,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
+      orl = #{orl,jdbcType=VARCHAR},
+      inter_id = #{interId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <properties>
+        <property name="dialect" value="mysql" />
+    </properties>
+    <!-- 设置但JDBC类型为空时,某些驱动程序 要指定值,default:OTHER，插入空值时不需要指定类型 -->
+    <settings>
+        <setting name="jdbcTypeForNull" value="NULL"/>
+        <!-- 全局映射器启用缓存 -->
+        <setting name="cacheEnabled" value="true"/>
+        <!-- 开启驼峰自动映射 -->
+        <setting name="mapUnderscoreToCamelCase" value="true" />
+
+        <setting name="logImpl" value="LOG4J" />
+
+    </settings>
+    <!-- 类型别名 -->
+    <typeAliases>
+        <package name="com.fxyz.chebao.pojo"/>
+    </typeAliases>
+    <plugins>
+        <plugin interceptor="com.fxyz.interceptor.PageInterceptor">
+        </plugin>
+    </plugins>    
+</configuration>
