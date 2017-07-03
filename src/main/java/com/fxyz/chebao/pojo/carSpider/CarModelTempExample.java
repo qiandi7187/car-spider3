@@ -563,66 +563,6 @@ public class CarModelTempExample {
             addCriterion("name not between", value1, value2, "name");
             return (Criteria) this;
         }
-
-        public Criteria andInterIdIsNull() {
-            addCriterion("inter_id is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andInterIdIsNotNull() {
-            addCriterion("inter_id is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andInterIdEqualTo(Integer value) {
-            addCriterion("inter_id =", value, "interId");
-            return (Criteria) this;
-        }
-
-        public Criteria andInterIdNotEqualTo(Integer value) {
-            addCriterion("inter_id <>", value, "interId");
-            return (Criteria) this;
-        }
-
-        public Criteria andInterIdGreaterThan(Integer value) {
-            addCriterion("inter_id >", value, "interId");
-            return (Criteria) this;
-        }
-
-        public Criteria andInterIdGreaterThanOrEqualTo(Integer value) {
-            addCriterion("inter_id >=", value, "interId");
-            return (Criteria) this;
-        }
-
-        public Criteria andInterIdLessThan(Integer value) {
-            addCriterion("inter_id <", value, "interId");
-            return (Criteria) this;
-        }
-
-        public Criteria andInterIdLessThanOrEqualTo(Integer value) {
-            addCriterion("inter_id <=", value, "interId");
-            return (Criteria) this;
-        }
-
-        public Criteria andInterIdIn(List<Integer> values) {
-            addCriterion("inter_id in", values, "interId");
-            return (Criteria) this;
-        }
-
-        public Criteria andInterIdNotIn(List<Integer> values) {
-            addCriterion("inter_id not in", values, "interId");
-            return (Criteria) this;
-        }
-
-        public Criteria andInterIdBetween(Integer value1, Integer value2) {
-            addCriterion("inter_id between", value1, value2, "interId");
-            return (Criteria) this;
-        }
-
-        public Criteria andInterIdNotBetween(Integer value1, Integer value2) {
-            addCriterion("inter_id not between", value1, value2, "interId");
-            return (Criteria) this;
-        }
     }
 
     public static class Criteria extends GeneratedCriteria {

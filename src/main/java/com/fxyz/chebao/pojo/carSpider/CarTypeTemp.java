@@ -25,8 +25,6 @@ public class CarTypeTemp {
 
     private Integer orl;
 
-    private Integer interId;
-
     public Integer getId() {
         return id;
     }
@@ -121,13 +119,5 @@ public class CarTypeTemp {
 
     public void setOrl(Integer orl) {
         this.orl = orl;
-    }
-
-    public Integer getInterId() {
-        return interId;
-    }
-
-    public void setInterId(Integer interId) {
-        this.interId = interId;
     }
 }

@@ -15,8 +15,6 @@ public class CarModelTemp {
 
     private String name;
 
-    private Integer interId;
-
     public Integer getId() {
         return id;
     }
@@ -71,13 +69,5 @@ public class CarModelTemp {
 
     public void setName(String name) {
         this.name = name == null ? null : name.trim();
-    }
-
-    public Integer getInterId() {
-        return interId;
-    }
-
-    public void setInterId(Integer interId) {
-        this.interId = interId;
     }
 }

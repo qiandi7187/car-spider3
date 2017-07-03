@@ -14,11 +14,10 @@
     <result column="tax" property="tax" jdbcType="VARCHAR" />
     <result column="state" property="state" jdbcType="VARCHAR" />
     <result column="orl" property="orl" jdbcType="INTEGER" />
-    <result column="inter_id" property="interId" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, model_id, name, group_name, driving_mode, transmission, guide_price, dealer_price, 
-    second_price, tax, state, orl, inter_id
+    second_price, tax, state, orl
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -34,13 +33,11 @@
     insert into car_type_temp (id, model_id, name, 
       group_name, driving_mode, transmission, 
       guide_price, dealer_price, second_price, 
-      tax, state, orl, inter_id
-      )
+      tax, state, orl)
     values (#{id,jdbcType=INTEGER}, #{modelId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
       #{groupName,jdbcType=VARCHAR}, #{drivingMode,jdbcType=VARCHAR}, #{transmission,jdbcType=VARCHAR}, 
       #{guidePrice,jdbcType=VARCHAR}, #{dealerPrice,jdbcType=VARCHAR}, #{secondPrice,jdbcType=VARCHAR}, 
-      #{tax,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, #{orl,jdbcType=INTEGER}, #{interId,jdbcType=INTEGER}
-      )
+      #{tax,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, #{orl,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.fxyz.chebao.pojo.carSpider.CarTypeTemp" >
     insert into car_type_temp
@@ -81,9 +78,6 @@
       <if test="orl != null" >
         orl,
       </if>
-      <if test="interId != null" >
-        inter_id,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -121,9 +115,6 @@
       </if>
       <if test="orl != null" >
         #{orl,jdbcType=INTEGER},
-      </if>
-      <if test="interId != null" >
-        #{interId,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -163,9 +154,6 @@
       <if test="orl != null" >
         orl = #{orl,jdbcType=INTEGER},
       </if>
-      <if test="interId != null" >
-        inter_id = #{interId,jdbcType=INTEGER},
-      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -181,8 +169,7 @@
       second_price = #{secondPrice,jdbcType=VARCHAR},
       tax = #{tax,jdbcType=VARCHAR},
       state = #{state,jdbcType=VARCHAR},
-      orl = #{orl,jdbcType=INTEGER},
-      inter_id = #{interId,jdbcType=INTEGER}
+      orl = #{orl,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

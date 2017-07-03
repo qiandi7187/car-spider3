@@ -9,8 +9,6 @@ public class CarManufacturerTemp {
 
     private String orl;
 
-    private Integer interId;
-
     public Integer getId() {
         return id;
     }
@@ -41,13 +39,5 @@ public class CarManufacturerTemp {
 
     public void setOrl(String orl) {
         this.orl = orl == null ? null : orl.trim();
-    }
-
-    public Integer getInterId() {
-        return interId;
-    }
-
-    public void setInterId(Integer interId) {
-        this.interId = interId;
     }
 }

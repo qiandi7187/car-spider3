@@ -9,7 +9,6 @@
     <result column="orl" property="orl" jdbcType="INTEGER" />
     <result column="state" property="state" jdbcType="VARCHAR" />
     <result column="name" property="name" jdbcType="VARCHAR" />
-    <result column="inter_id" property="interId" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -41,7 +40,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, manu_id, imgurl, price, orl, state, name, inter_id
+    id, manu_id, imgurl, price, orl, state, name
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.fxyz.chebao.pojo.carSpider.CarModelTempExample" >
     select
@@ -71,10 +70,10 @@
   <insert id="insert" parameterType="com.fxyz.chebao.pojo.carSpider.CarModelTemp" >
     insert into car_model_temp (id, manu_id, imgurl, 
       price, orl, state, 
-      name, inter_id)
+      name)
     values (#{id,jdbcType=INTEGER}, #{manuId,jdbcType=INTEGER}, #{imgurl,jdbcType=VARCHAR}, 
       #{price,jdbcType=VARCHAR}, #{orl,jdbcType=INTEGER}, #{state,jdbcType=VARCHAR}, 
-      #{name,jdbcType=VARCHAR}, #{interId,jdbcType=INTEGER})
+      #{name,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.fxyz.chebao.pojo.carSpider.CarModelTemp" >
     insert into car_model_temp
@@ -100,9 +99,6 @@
       <if test="name != null" >
         name,
       </if>
-      <if test="interId != null" >
-        inter_id,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -125,9 +121,6 @@
       </if>
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
-      </if>
-      <if test="interId != null" >
-        #{interId,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -152,9 +145,6 @@
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
       </if>
-      <if test="interId != null" >
-        inter_id = #{interId,jdbcType=INTEGER},
-      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -165,8 +155,7 @@
       price = #{price,jdbcType=VARCHAR},
       orl = #{orl,jdbcType=INTEGER},
       state = #{state,jdbcType=VARCHAR},
-      name = #{name,jdbcType=VARCHAR},
-      inter_id = #{interId,jdbcType=INTEGER}
+      name = #{name,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>
