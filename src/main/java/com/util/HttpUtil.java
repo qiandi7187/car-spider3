@@ -55,6 +55,16 @@ public class HttpUtil {
 
     }
 
+    public static byte[] sendGetForBytes(String url) throws Exception {
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        Response response = client.newCall(request).execute();
+        return response.body().bytes();
+
+    }
+
 
     /**
      * 向指定 URL 发送POST方法的请求

@@ -13,6 +13,8 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,17 +28,18 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
     @Autowired
     CarManufacturerTempMapper manufacturerTempMapper;
     @Autowired
-    CarModelTempMapper modelTempMapper;
+    CarSeriesTempMapper seriesTempMapper;
     @Autowired
     CarTypeTempMapper typeTempMapper;
-
+    @Autowired
+    CarSeriesMapper carSeriesMapper;
 
     @Override
-    public void getCarTypeStopModelById(int modelId){
-        //int modelInterId = 19;
+    public void getCarTypeStopSeriesById(int SeriesId){
+        //int SeriesInterId = 19;
         try {
-            Document doc = Jsoup.connect("http://www.autohome.com.cn/"+ modelId).get();
-            Elements trs = doc.select(".models_tab tr");
+            Document doc = Jsoup.connect("http://www.autohome.com.cn/"+ SeriesId).get();
+            Elements trs = doc.select(".Seriess_tab tr");
             int orl = 10;
             for(Element tr:trs){
                 CarTypeTemp type = new CarTypeTemp();
@@ -54,7 +57,7 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
                 }catch (Exception e){
                     System.out.println("抓取id出错");
                 }
-                type.setModelId(modelId);
+                type.setSeriesId(SeriesId);
                 type.setName(tr.select(".name_d a").text());
                 type.setSecondPrice(tr.select(".price_d span a").text());
                 System.out.println("type  id:"+type.getId()+"   name:"+type.getName()+"  guideprice: "+type.getGuidePrice()+"  dealerPrice:"+type.getDealerPrice()+
@@ -71,33 +74,33 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
 
 
     @Override
-    public void getModelImgUrlById(int modelId) {
+    public void getSeriesImgUrlById(int SeriesId) {
 
         try {
-            Document doc = Jsoup.connect("http://www.autohome.com.cn/" + modelId).get();
+            Document doc = Jsoup.connect("http://www.autohome.com.cn/" + SeriesId).get();
             //生成第三层车系图片信息
             String imgurl = doc.select(".autoseries-pic-img1 picture img").attr("src");
             System.out.println("第一种方式:"+imgurl);
-            CarModelTemp model = new CarModelTemp();
-            model.setId(modelId);
+            CarSeriesTemp Series = new CarSeriesTemp();
+            Series.setId(SeriesId);
             if(imgurl!=null&& (imgurl.indexOf("http")!=-1)){
-                model.setImgurl(imgurl);
-                modelTempMapper.updateByPrimaryKeySelective(model);
+                Series.setImgurl(imgurl);
+                seriesTempMapper.updateByPrimaryKeySelective(Series);
                 return;
             }
             //没有取到则用第二种方式
             imgurl = doc.select(".models_info dt a img").attr("src");
             System.out.println("第一种未取到图片采用第二种方式:"+imgurl);
             if(imgurl!=null&& (imgurl.indexOf("http")!=-1)){
-                model.setImgurl(imgurl);
-                modelTempMapper.updateByPrimaryKeySelective(model);
+                Series.setImgurl(imgurl);
+                seriesTempMapper.updateByPrimaryKeySelective(Series);
                 return;
             }
-            if(imgurl!=null&& (imgurl.indexOf("http")!=-1)){
+            if(imgurl==null || (imgurl.indexOf("http")==-1)){
                 throw new Exception("两种方式都没有获取图片");
             }
         } catch (Exception e) {
-            System.out.println("生成第三层车系图片信息出错 model:" + modelId + "  " + e.getMessage());
+            System.out.println("生成第三层车系图片信息出错 Series:" + SeriesId + "  " + e.getMessage());
         }
 
     }
@@ -106,17 +109,17 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
 
 
     @Override
-    public void getCarTypeStopSaleById(int modelId){
-        //int modelInterId = 19;
+    public void getCarTypeStopSaleById(int SeriesId){
+        //int SeriesInterId = 19;
         try {
-            Document doc = Jsoup.connect("http://www.autohome.com.cn/"+ modelId).get();
+            Document doc = Jsoup.connect("http://www.autohome.com.cn/"+ SeriesId).get();
             //配置正常在售车系的html模板
             Elements as = doc.select("#drop2 ul li a");
             System.out.println(as.size());
             for (Element a : as) {
                 String yid = a.attr("data");
                 //System.out.println(yid);
-                String response = HttpUtil.sendGet("http://www.autohome.com.cn/ashx/series_allspec.ashx?s=" + modelId + "&y=" + yid + "&l=3");
+                String response = HttpUtil.sendGet("http://www.autohome.com.cn/ashx/series_allspec.ashx?s=" + SeriesId + "&y=" + yid + "&l=3");
                 JSONObject resJson = JSONObject.parseObject(response);
                 JSONArray specArr = resJson.getJSONArray("Spec");
 
@@ -130,7 +133,7 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
                     }catch (Exception e){
                         System.out.println("获取id失败");
                     }
-                    type.setModelId(modelId);
+                    type.setSeriesId(SeriesId);
                     type.setDrivingMode(typeJson.getString("DrivingModeName"));
                     type.setTransmission(typeJson.getString("Transmission"));
                     type.setGuidePrice(typeJson.getString("Price"));
@@ -150,10 +153,10 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
 
     }
     @Override
-    public void getCarTypeOnSaleById( int modelId ){
-        //int modelInterId = 19;
+    public void getCarTypeOnSaleById( int SeriesId ){
+        //int SeriesInterId = 19;
         try{
-            Document doc = Jsoup.connect("http://www.autohome.com.cn/" + modelId).get();
+            Document doc = Jsoup.connect("http://www.autohome.com.cn/" + SeriesId).get();
             //生成第四层信息
             Elements lis = doc.select("#speclist .current ul li");
             int orl = 10;
@@ -162,7 +165,7 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
                 // System.out.println("--------------------------------------------------");
                 // System.out.println(liStr);
                 CarTypeTemp type = new CarTypeTemp();
-                type.setModelId(modelId);
+                type.setSeriesId(SeriesId);
                 type.setOrl(orl);
                 try{
                     String href = li.select(".interval01-list-cars-infor p:eq(0) a").attr("href");
@@ -294,17 +297,17 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
                             //System.out.println("price:"+price);
                             System.out.println("     车型id：" + matcherGrandchild2.group(1) + "  名称：" + matcherGrandchild2.group(2) + "  指导价：" + price);
                             System.out.println("group2:"+matcherGrandchild2.group(2));
-                            CarModelTemp model = new CarModelTemp();
-                            model.setId(Integer.parseInt(matcherGrandchild2.group(1)));
-                            model.setOrl(orl);
-                            model.setState((matcherGrandchild2.group(2)==null||matcherGrandchild2.group(2).equals(""))?"在售":"停售");
-                            model.setManuId(manufacturer.getId());
-                            model.setName(matcherGrandchild2.group(3));
-                            model.setPrice(price);
+                            CarSeriesTemp Series = new CarSeriesTemp();
+                            Series.setId(Integer.parseInt(matcherGrandchild2.group(1)));
+                            Series.setOrl(orl);
+                            Series.setState((matcherGrandchild2.group(2)==null||matcherGrandchild2.group(2).equals(""))?"在售":"停售");
+                            Series.setManuId(manufacturer.getId());
+                            Series.setName(matcherGrandchild2.group(3));
+                            Series.setPrice(price);
                             try{
-                                modelTempMapper.insertSelective(model);
+                                seriesTempMapper.insertSelective(Series);
                             }catch (Exception e){
-                                System.out.println("插入Model  id="+model.getId()+"  name="+model.getName()+"出错:"+e.getMessage());
+                                System.out.println("插入Series  id="+Series.getId()+"  name="+Series.getName()+"出错:"+e.getMessage());
                                 continue;
                             }
                         }
@@ -322,11 +325,37 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
     }
 
     @Override
-    public List<CarModelTemp> getAllModels(){
-        CarModelTempExample all = new CarModelTempExample();
-        List<CarModelTemp> models = modelTempMapper.selectByExample(all);
-        return  models;
+    public List<CarSeriesTemp> getAllSeriesTemp(){
+        CarSeriesTempExample all = new CarSeriesTempExample();
+        List<CarSeriesTemp> series = seriesTempMapper.selectByExample(all);
+        return  series;
 
+    }
+
+    @Override
+    public List<CarSeries> getAllSeries(){
+        CarSeriesExample all = new CarSeriesExample();
+        List<CarSeries> series = carSeriesMapper.selectByExample(all);
+        return  series;
+
+    }
+
+
+    @Override
+    public void copySeriesUrlById(String filepath,String filename ,String imgurl){
+        //int SeriesId = 18;
+        //String filepath="D:\\imgs";
+        //String imgurl = "http://car3.autoimg.cn/cardfs/product/g12/M0C/B2/CC/t_autohomecar__wKjBy1g9Va2AS7MbAAuBAsvFEvg627.jpg";
+        try {
+            byte[]  response = HttpUtil.sendGetForBytes(imgurl);
+            File file = new File(filepath + File.separator + filename);
+            FileOutputStream fops = new FileOutputStream(file);
+            fops.write(response);
+            fops.flush();
+            fops.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

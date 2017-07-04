@@ -1,7 +1,8 @@
 package com.fxyz.chebao.service;
 
 import com.fxyz.chebao.pojo.Group;
-import com.fxyz.chebao.pojo.carSpider.CarModelTemp;
+import com.fxyz.chebao.pojo.carSpider.CarSeries;
+import com.fxyz.chebao.pojo.carSpider.CarSeriesTemp;
 
 import java.util.List;
 
@@ -18,32 +19,46 @@ public interface ICarSpiderService {
     /**
      * 更新图片状态
      */
-    public void getModelImgUrlById(int modelId);
+    public void getSeriesImgUrlById(int SeriesId);
 
 
         /**
          * 根据车系id取得停产车系的车型信息
-         * @param modelId
+         * @param SeriesId
          */
-    public void getCarTypeStopModelById(int modelId);
+    public void getCarTypeStopSeriesById(int SeriesId);
 
     /**
      * 根据车系id取得在售车系停产车型的车型信息
-     * @param modelId
+     * @param SeriesId
      */
-    public void getCarTypeStopSaleById(int modelId);
+    public void getCarTypeStopSaleById(int SeriesId);
 
     /**
      * 根据车系id取得在售车系在售车型的车型信息
-     * @param modelId
+     * @param SeriesId
      */
-    public void getCarTypeOnSaleById( int modelId );
+    public void getCarTypeOnSaleById( int SeriesId );
+
 
     /**
-     * 获取数据库表中所有的车系信息
+     * 获取数据库临时表中所有的车系信息
      * @return
      */
-    public List<CarModelTemp> getAllModels();
+    public List<CarSeriesTemp> getAllSeriesTemp();
 
+    /**
+     * 获取数据库正式表中所有的车系信息
+     * @return
+     */
+    public List<CarSeries> getAllSeries();
+
+    /**
+     * 将图片保存本地
+     * @param filepath  文件保存路径
+     * @param filename  文件名
+     * @param imgurl  抓取url地址
+     */
+    public void copySeriesUrlById(String filepath,String filename ,String imgurl);
 
     }

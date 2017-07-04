@@ -3,7 +3,7 @@
 <mapper namespace="com.fxyz.chebao.mapper.CarTypeTempMapper" >
   <resultMap id="BaseResultMap" type="com.fxyz.chebao.pojo.carSpider.CarTypeTemp" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="model_id" property="modelId" jdbcType="INTEGER" />
+    <result column="series_id" property="seriesId" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="group_name" property="groupName" jdbcType="VARCHAR" />
     <result column="driving_mode" property="drivingMode" jdbcType="VARCHAR" />
@@ -16,7 +16,7 @@
     <result column="orl" property="orl" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, model_id, name, group_name, driving_mode, transmission, guide_price, dealer_price, 
+    id, series_id, name, group_name, driving_mode, transmission, guide_price, dealer_price, 
     second_price, tax, state, orl
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -30,11 +30,11 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.fxyz.chebao.pojo.carSpider.CarTypeTemp" >
-    insert into car_type_temp (id, model_id, name, 
+    insert into car_type_temp (id, series_id, name, 
       group_name, driving_mode, transmission, 
       guide_price, dealer_price, second_price, 
       tax, state, orl)
-    values (#{id,jdbcType=INTEGER}, #{modelId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{seriesId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
       #{groupName,jdbcType=VARCHAR}, #{drivingMode,jdbcType=VARCHAR}, #{transmission,jdbcType=VARCHAR}, 
       #{guidePrice,jdbcType=VARCHAR}, #{dealerPrice,jdbcType=VARCHAR}, #{secondPrice,jdbcType=VARCHAR}, 
       #{tax,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, #{orl,jdbcType=INTEGER})
@@ -45,8 +45,8 @@
       <if test="id != null" >
         id,
       </if>
-      <if test="modelId != null" >
-        model_id,
+      <if test="seriesId != null" >
+        series_id,
       </if>
       <if test="name != null" >
         name,
@@ -83,8 +83,8 @@
       <if test="id != null" >
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="modelId != null" >
-        #{modelId,jdbcType=INTEGER},
+      <if test="seriesId != null" >
+        #{seriesId,jdbcType=INTEGER},
       </if>
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
@@ -121,8 +121,8 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.fxyz.chebao.pojo.carSpider.CarTypeTemp" >
     update car_type_temp
     <set >
-      <if test="modelId != null" >
-        model_id = #{modelId,jdbcType=INTEGER},
+      <if test="seriesId != null" >
+        series_id = #{seriesId,jdbcType=INTEGER},
       </if>
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
@@ -159,7 +159,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.fxyz.chebao.pojo.carSpider.CarTypeTemp" >
     update car_type_temp
-    set model_id = #{modelId,jdbcType=INTEGER},
+    set series_id = #{seriesId,jdbcType=INTEGER},
       name = #{name,jdbcType=VARCHAR},
       group_name = #{groupName,jdbcType=VARCHAR},
       driving_mode = #{drivingMode,jdbcType=VARCHAR},

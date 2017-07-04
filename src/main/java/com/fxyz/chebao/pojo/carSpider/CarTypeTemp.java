@@ -3,7 +3,7 @@ package com.fxyz.chebao.pojo.carSpider;
 public class CarTypeTemp {
     private Integer id;
 
-    private Integer modelId;
+    private Integer seriesId;
 
     private String name;
 
@@ -33,12 +33,12 @@ public class CarTypeTemp {
         this.id = id;
     }
 
-    public Integer getModelId() {
-        return modelId;
+    public Integer getSeriesId() {
+        return seriesId;
     }
 
-    public void setModelId(Integer modelId) {
-        this.modelId = modelId;
+    public void setSeriesId(Integer seriesId) {
+        this.seriesId = seriesId;
     }
 
     public String getName() {
