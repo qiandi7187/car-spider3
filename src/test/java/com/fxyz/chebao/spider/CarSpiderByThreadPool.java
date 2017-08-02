@@ -1,28 +1,27 @@
 package com.fxyz.chebao.spider;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.fxyz.chebao.mapper.CarBrandTempMapper;
-import com.fxyz.chebao.mapper.CarManufacturerTempMapper;
 import com.fxyz.chebao.mapper.CarSeriesTempMapper;
 import com.fxyz.chebao.mapper.CarTypeTempMapper;
-import com.fxyz.chebao.pojo.carSpider.*;
+import com.fxyz.chebao.pojo.carSpider.CarSeriesTemp;
 import com.fxyz.chebao.service.ICarSpiderService;
-import com.util.HttpUtil;
-import org.jsoup.Jsoup;
+import org.apache.log4j.Logger;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.springframework.util.Log4jConfigurer;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by qiandi on 2017/6/27.
@@ -41,6 +40,18 @@ public class CarSpiderByThreadPool {
 
     @Autowired
     CarTypeTempMapper typeTempMapper;
+
+    private static Logger logger = Logger.getLogger(CarSpiderByThreadPool.class);
+
+
+    @Before
+    public void loadConfig(){
+        try {
+            Log4jConfigurer.initLogging("classpath:config/property/log4j.properties");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * 取得汽车品牌 厂商 车系
@@ -73,44 +84,48 @@ public class CarSpiderByThreadPool {
     public void getSeriesUrl(){
         List<CarSeriesTemp> Seriess = carSpiderService.getAllSeriesTemp();
         System.out.println(Seriess.size());
-        ExecutorService cachedThreadPool = Executors.newFixedThreadPool(5);
-        List<Future> list = new ArrayList<Future>();
+        ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
         int count = 0;
-        for (CarSeriesTemp series : Seriess){
-            final int SeriesId = series.getId();
-            Future f = cachedThreadPool.submit( ()-> {
-                Map map=new HashMap();
-                Document doc=null;
-                try{
-                     doc = carSpiderService.sendSeriesImgUrlById(SeriesId);
-                }catch(Exception e){
+        int batchSize = 100;//解决内存不释放问题  按批释放
+        for(int i=0;i<Seriess.size()/batchSize+1;i++){
+            List<Future> list = new ArrayList<Future>();
+            for(int j=0;j<batchSize && i*batchSize+j<Seriess.size();j++){
+                    final int SeriesId = Seriess.get(i*batchSize+j).getId();
+                    Future f = cachedThreadPool.submit( ()-> {
+                        Map map=new HashMap();
+                        Document doc=null;
+                        try{
+                            doc = carSpiderService.sendSeriesImgUrlById(SeriesId);
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
+                        map.put("doc",doc);
+                        map.put("SeriesId",SeriesId);
+                        return map;
+                    });
+                    list.add(f);
+            }
+            System.out.println("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS 总："+(Seriess.size()/batchSize+1 )+ "   第"+(i+1)+"次    ");
+            for(Future f : list) {
+                try {
+                    Map map=(Map) f.get(20000, TimeUnit.MILLISECONDS);
+                    Document doc = (Document)map.get("doc");
+                    Integer SeriesId=(Integer) map.get("SeriesId");
+//                System.out.println("response:");
+                    //获取在售车系的图片
+                    //carSpiderService.deocdeSeriesImgUrlById(doc,SeriesId);
+                    //在售车系 在售车型信息
+                    carSpiderService.decodeCarTypeOnSaleById(doc,SeriesId);
+                    //获取在售车系 停售车型信息
+                    carSpiderService.decodeCarTypeStopSaleById(doc,SeriesId);
+                    //获取停售车型信息
+                    carSpiderService.decodeCarTypeStopSeriesById(doc,SeriesId);
+                }catch (Exception e) {
                     e.printStackTrace();
                 }
-                map.put("doc",doc);
-                map.put("SeriesId",SeriesId);
-                return map;
-            });
-            list.add(f);
-        }
-        cachedThreadPool.shutdown();
-        for(Future f : list) {
-            try {
-                Map map=(Map) f.get(5000, TimeUnit.MILLISECONDS);
-                Document doc = (Document)map.get("doc");
-                Integer SeriesId=(Integer) map.get("SeriesId");
-//                System.out.println("response:");
-                //获取在售车系的图片
-                carSpiderService.deocdeSeriesImgUrlById(doc,SeriesId);
-                //在售车系 在售车型信息
-                carSpiderService.decodeCarTypeOnSaleById(doc,SeriesId);
-                //获取在售车系 停售车型信息
-                carSpiderService.decodeCarTypeStopSaleById(doc,SeriesId);
-                //获取停售车型信息
-                carSpiderService.decodeCarTypeStopSeriesById(doc,SeriesId);
-            }catch (Exception e) {
-                e.printStackTrace();
             }
         }
+        cachedThreadPool.shutdown();
     }
 
 

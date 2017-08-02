@@ -6,6 +6,7 @@ import com.fxyz.chebao.mapper.*;
 import com.fxyz.chebao.pojo.carSpider.*;
 import com.fxyz.chebao.service.ICarSpiderService;
 import com.util.HttpUtil;
+import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -23,6 +24,7 @@ import java.util.regex.Pattern;
 
 @Service
 public class CarSpiderServiceImpl implements ICarSpiderService {
+    private static Logger logger = Logger.getLogger(CarSpiderServiceImpl.class);
 
     @Autowired
     CarBrandTempMapper brandTempMapper;
@@ -45,7 +47,7 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
             //生成第三层车系图片信息
             deocdeSeriesImgUrlById(doc,seriesId);
         } catch (Exception e) {
-            System.out.println("生成第三层车系图片信息出错 Series:" + seriesId + "  " + e.getMessage());
+            logger.error("生成第三层车系图片信息出错 Series:" + seriesId + "  " + e.getMessage());
         }
 
     }
@@ -59,8 +61,8 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
             //  Document doc = Jsoup.parse(response);
             //生成第三层车系图片信息
             String imgurl = doc.select(".autoseries-pic-img1 picture img").attr("src");
-            System.out.println("SeriesId:"+seriesId);
-            System.out.println("第一种方式huj:"+imgurl);
+            logger.info("SeriesId:"+seriesId);
+            logger.info("第一种方式huj:"+imgurl);
             CarSeriesTemp series = new CarSeriesTemp();
             series.setId(seriesId);
             if(imgurl!=null&& (imgurl.indexOf("//")!=-1)){
@@ -74,7 +76,7 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
             }
             //没有取到则用第二种方式
             imgurl = doc.select(".models_info dt a img").attr("src");
-            System.out.println("第一种未取到图片采用第二种方式:"+imgurl);
+            logger.info("第一种未取到图片采用第二种方式:"+imgurl);
             if(imgurl!=null&& (imgurl.indexOf("http")!=-1)){
                 series.setImgurl(imgurl);
                 seriesTempMapper.updateByPrimaryKeySelective(series);
@@ -84,7 +86,7 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
                 throw new Exception("两种方式都没有获取图片");
             }
         } catch (Exception e) {
-            System.out.println("生成第三层车系图片信息出错 "  + "  " + e.getMessage());
+            logger.error("生成第三层车系图片信息出错 "  + "  " + e.getMessage());
         }
 
     }
@@ -98,7 +100,7 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
             Document doc = sendCarType(seriesId);
             decodeCarTypeStopSaleById(doc,seriesId);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("生成停售车型出错："+e.getMessage());
         }
 
     }
@@ -110,7 +112,6 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
     @Override
     public void decodeCarTypeStopSaleById(Document doc,Integer seriesId) throws Exception {
         Elements as = doc.select("#drop2 ul li a");
-        System.out.println(as.size());
         for (Element a : as) {
             String yid = a.attr("data");
             //System.out.println(yid);
@@ -121,12 +122,12 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
             for (int i = 0; i < specArr.size(); i++) {
                 CarTypeTemp type = new CarTypeTemp();
                 JSONObject typeJson = specArr.getJSONObject(i);
-                System.out.println(typeJson);
+                //System.out.println(typeJson);
                 type.setOrl(i*10+10);
                 try {
                     type.setId(typeJson.getIntValue("Id"));
                 }catch (Exception e){
-                    System.out.println("获取id失败");
+                    logger.error("获取id失败");
                 }
                 type.setSeriesId(seriesId);
                 type.setDrivingMode(typeJson.getString("DrivingModeName"));
@@ -137,7 +138,7 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
                 type.setGroupName(typeJson.getString("GroupName"));
                 type.setTax(typeJson.getBoolean("ShowTaxRelief")==true?"减税":null);
                 type.setState("停售");
-                System.out.println("type  id:"+type.getId()+"   name:"+type.getName()+"  guideprice: "+type.getGuidePrice()+"  dealerPrice:"+type.getDealerPrice()+
+                logger.info("type  id:"+type.getId()+"   name:"+type.getName()+"  guideprice: "+type.getGuidePrice()+"  dealerPrice:"+type.getDealerPrice()+
                         "   DrivingMode:"+type.getDrivingMode()+"   setTransmission:"+type.getTransmission());
                 typeTempMapper.insertSelective(type);
             }
@@ -153,7 +154,7 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
             Document doc = sendCarType(seriesId );
             decodeCarTypeOnSaleById(doc,seriesId);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("生成在售车型出错："+e.getMessage());
         }
 
     }
@@ -178,7 +179,7 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
                     type.setId(Integer.parseInt( m.group(1)));
                 }
             }catch (Exception e){
-                System.out.println("抓取id出错");
+                logger.error("抓取id出错");
             }
             type.setName(li.select(".interval01-list-cars-infor p:eq(0) a").text());
             String p2 = li.select(".interval01-list-cars-infor p:eq(1)").html();
@@ -201,7 +202,7 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
             type.setGroupName(li.parent().previousElementSibling().select(".interval01-list-cars-text").text());
             type.setGuidePrice(li.select(".interval01-list-guidance div").text());
 
-            System.out.println("type  id:"+type.getId()+"   name:"+type.getName()+"  guideprice: "+type.getGuidePrice()+"  dealerPrice:"+type.getDealerPrice()+
+            logger.info("type  id:"+type.getId()+"   name:"+type.getName()+"  guideprice: "+type.getGuidePrice()+"  dealerPrice:"+type.getDealerPrice()+
                     "   DrivingMode:"+type.getDrivingMode()+"   setTransmission:"+type.getTransmission());
             typeTempMapper.insertSelective(type);
             orl += 10;
@@ -213,7 +214,7 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
             Document doc = sendCarType(seriesId );
             decodeCarTypeStopSeriesById(doc,seriesId);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("生成停售车车系的车型出错："+e.getMessage());
         }
     }
 
@@ -237,19 +238,19 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
                     }
 
                 }catch (Exception e){
-                    System.out.println("抓取id出错");
+                    logger.error("抓取id出错");
                 }
                 type.setSeriesId(seriesId);
                 type.setName(tr.select(".name_d a").text());
                 type.setSecondPrice(tr.select(".price_d span a").text());
-                System.out.println("type  id:"+type.getId()+"   name:"+type.getName()+"  guideprice: "+type.getGuidePrice()+"  dealerPrice:"+type.getDealerPrice()+
+                logger.info("type  id:"+type.getId()+"   name:"+type.getName()+"  guideprice: "+type.getGuidePrice()+"  dealerPrice:"+type.getDealerPrice()+
                         "   SecondPrice:"+type.getSecondPrice()+"   setTransmission:"+type.getTransmission());
                 typeTempMapper.insertSelective(type);
                 orl+=10;
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("生成停售车系的车型出错："+e.getMessage());
         }
     }
 
@@ -272,11 +273,11 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
                 Pattern patternChild = Pattern.compile("<dl.*?id=\"(.*?)\".*?olr=\"(\\S+)\".*?>",Pattern.DOTALL);
                 Matcher matcherChild = patternChild.matcher(matcher.group(0));
                 while (matcherChild.find()) {
-                    System.out.println("品牌id：" + matcherChild.group(1)+"    olr:"+matcherChild.group(2));
+                    logger.info("品牌id：" + matcherChild.group(1)+"    olr:"+matcherChild.group(2));
                     try {
                         brand.setId(Integer.parseInt(matcherChild.group(1)));
                     }catch (Exception e){
-                        System.out.println("获取ID失败");
+                        logger.error("获取ID失败");
                     }
 
                     brand.setOrl(matcherChild.group(2));
@@ -287,7 +288,7 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
                 patternChild = Pattern.compile("<dt.*?<img.*?src=\"(.*?)\">.*?<div><a.*?>(.*?)</a>.*?</dt>",Pattern.DOTALL);
                 matcherChild = patternChild.matcher(matcher.group(1));
                 while (matcherChild.find()) {
-                    System.out.println("品牌名称：" + matcherChild.group(2)+"   url:"+matcherChild.group(1));
+                    logger.info("品牌名称：" + matcherChild.group(2)+"   url:"+matcherChild.group(1));
                     brand.setImgurl(matcherChild.group(1));
                     brand.setName(matcherChild.group(2));
 
@@ -296,7 +297,7 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
                 try{
                     brandTempMapper.insertSelective(brand);
                 }catch (Exception e){
-                    System.out.println("插入Brand  id="+brand.getId()+"  name="+brand.getName()+"出错:"+e.getMessage());
+                    logger.error("插入Brand  id="+brand.getId()+"  name="+brand.getName()+"出错:"+e.getMessage());
                     continue;
                 }
 
@@ -315,10 +316,10 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
                     try{
                         manufacturerTempMapper.insertSelective(manufacturer);
                     }catch (Exception e){
-                        System.out.println("插入Manufacturer  id="+manufacturer.getId()+"  name="+manufacturer.getName()+"出错:"+e.getMessage());
+                        logger.error("插入Manufacturer  id="+manufacturer.getId()+"  name="+manufacturer.getName()+"出错:"+e.getMessage());
                         continue;
                     }
-                    System.out.println("   厂商名称：" + matcherChild.group(1));
+                    //System.out.println("   厂商名称：" + matcherChild.group(1));
                     // System.out.println("   车型明细：" + matcherChild.group(2));
                     //匹配车型 第三级别
                     //Pattern patternGrandchild  = Pattern.compile("<li.*?id=\"(.*?)\">.*?<h4><a.*?>(.*?)</a>.*?</h4>.*?指导价：<a.*?>(.*?)</a>.*?</li>",Pattern.DOTALL);
@@ -339,8 +340,8 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
                                 price = matcherGrandchild3.group(1);
                             }
                             //System.out.println("price:"+price);
-                            System.out.println("     车型id：" + matcherGrandchild2.group(1) + "  名称：" + matcherGrandchild2.group(2) + "  指导价：" + price);
-                            System.out.println("group2:"+matcherGrandchild2.group(2));
+                            logger.info("     车型id：" + matcherGrandchild2.group(1) + "  名称：" + matcherGrandchild2.group(2) + "  指导价：" + price);
+                            //System.out.println("group2:"+matcherGrandchild2.group(2));
                             CarSeriesTemp Series = new CarSeriesTemp();
                             Series.setId(Integer.parseInt(matcherGrandchild2.group(1)));
                             Series.setOrl(orl);
@@ -351,7 +352,7 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
                             try{
                                 seriesTempMapper.insertSelective(Series);
                             }catch (Exception e){
-                                System.out.println("插入Series  id="+Series.getId()+"  name="+Series.getName()+"出错:"+e.getMessage());
+                                logger.error("插入Series  id="+Series.getId()+"  name="+Series.getName()+"出错:"+e.getMessage());
                                 continue;
                             }
                         }
