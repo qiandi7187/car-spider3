@@ -19,8 +19,8 @@
     <typeAliases>
         <package name="com.fxyz.chebao.pojo"/>
     </typeAliases>
-    <plugins>
+    <!--<plugins>
         <plugin interceptor="com.fxyz.interceptor.PageInterceptor">
         </plugin>
-    </plugins>    
+    </plugins>    -->
 </configuration>

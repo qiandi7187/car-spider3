@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,11 +35,192 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
     @Autowired
     CarSeriesMapper carSeriesMapper;
 
+
+
+    //将发送和接收拆分以支持异步模式
     @Override
-    public void getCarTypeStopSeriesById(int SeriesId){
+    public void getSeriesImgUrlById(int seriesId) {
+        try {
+            Document doc = sendSeriesImgUrlById(seriesId);
+            //生成第三层车系图片信息
+            deocdeSeriesImgUrlById(doc,seriesId);
+        } catch (Exception e) {
+            System.out.println("生成第三层车系图片信息出错 Series:" + seriesId + "  " + e.getMessage());
+        }
+
+    }
+    @Override
+    public Document sendSeriesImgUrlById(int seriesId) throws IOException {
+        return Jsoup.connect("http://www.autohome.com.cn/" + seriesId).get();
+    }
+    @Override
+    public void deocdeSeriesImgUrlById(Document doc,Integer seriesId ) {
+        try {
+            //  Document doc = Jsoup.parse(response);
+            //生成第三层车系图片信息
+            String imgurl = doc.select(".autoseries-pic-img1 picture img").attr("src");
+            System.out.println("SeriesId:"+seriesId);
+            System.out.println("第一种方式huj:"+imgurl);
+            CarSeriesTemp series = new CarSeriesTemp();
+            series.setId(seriesId);
+            if(imgurl!=null&& (imgurl.indexOf("//")!=-1)){
+                if(imgurl.indexOf("http")==-1){
+                    series.setImgurl("http:"+imgurl);
+                }else{
+                    series.setImgurl(imgurl);
+                }
+                seriesTempMapper.updateByPrimaryKeySelective(series);
+                return;
+            }
+            //没有取到则用第二种方式
+            imgurl = doc.select(".models_info dt a img").attr("src");
+            System.out.println("第一种未取到图片采用第二种方式:"+imgurl);
+            if(imgurl!=null&& (imgurl.indexOf("http")!=-1)){
+                series.setImgurl(imgurl);
+                seriesTempMapper.updateByPrimaryKeySelective(series);
+                return;
+            }
+            if(series.getImgurl()==null || (series.getImgurl().indexOf("http")==-1)){
+                throw new Exception("两种方式都没有获取图片");
+            }
+        } catch (Exception e) {
+            System.out.println("生成第三层车系图片信息出错 "  + "  " + e.getMessage());
+        }
+
+    }
+
+
+
+    @Override
+    public void getCarTypeStopSaleById(int seriesId){
         //int SeriesInterId = 19;
         try {
-            Document doc = Jsoup.connect("http://www.autohome.com.cn/"+ SeriesId).get();
+            Document doc = sendCarType(seriesId);
+            decodeCarTypeStopSaleById(doc,seriesId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public Document sendCarType(int SeriesId) throws IOException {
+        return Jsoup.connect("http://www.autohome.com.cn/"+ SeriesId).get();
+    }
+    @Override
+    public void decodeCarTypeStopSaleById(Document doc,Integer seriesId) throws Exception {
+        Elements as = doc.select("#drop2 ul li a");
+        System.out.println(as.size());
+        for (Element a : as) {
+            String yid = a.attr("data");
+            //System.out.println(yid);
+            String response = HttpUtil.sendGet("http://www.autohome.com.cn/ashx/series_allspec.ashx?s=" + seriesId + "&y=" + yid + "&l=3");
+            JSONObject resJson = JSONObject.parseObject(response);
+            JSONArray specArr = resJson.getJSONArray("Spec");
+
+            for (int i = 0; i < specArr.size(); i++) {
+                CarTypeTemp type = new CarTypeTemp();
+                JSONObject typeJson = specArr.getJSONObject(i);
+                System.out.println(typeJson);
+                type.setOrl(i*10+10);
+                try {
+                    type.setId(typeJson.getIntValue("Id"));
+                }catch (Exception e){
+                    System.out.println("获取id失败");
+                }
+                type.setSeriesId(seriesId);
+                type.setDrivingMode(typeJson.getString("DrivingModeName"));
+                type.setTransmission(typeJson.getString("Transmission"));
+                type.setGuidePrice(typeJson.getString("Price"));
+                type.setSecondPrice(typeJson.getString("Price2Sc"));
+                type.setName(typeJson.getString("Name"));
+                type.setGroupName(typeJson.getString("GroupName"));
+                type.setTax(typeJson.getBoolean("ShowTaxRelief")==true?"减税":null);
+                type.setState("停售");
+                System.out.println("type  id:"+type.getId()+"   name:"+type.getName()+"  guideprice: "+type.getGuidePrice()+"  dealerPrice:"+type.getDealerPrice()+
+                        "   DrivingMode:"+type.getDrivingMode()+"   setTransmission:"+type.getTransmission());
+                typeTempMapper.insertSelective(type);
+            }
+        }
+    }
+
+
+
+    @Override
+    public void getCarTypeOnSaleById( int seriesId ){
+        //int SeriesInterId = 19;
+        try{
+            Document doc = sendCarType(seriesId );
+            decodeCarTypeOnSaleById(doc,seriesId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void decodeCarTypeOnSaleById(Document doc,int seriesId){
+        //生成第四层信息
+        Elements lis = doc.select("#speclist .current ul li");
+        int orl = 10;
+        for (Element li : lis) {
+            String liStr = li.html();
+            // System.out.println("--------------------------------------------------");
+            // System.out.println(liStr);
+            CarTypeTemp type = new CarTypeTemp();
+            type.setSeriesId(seriesId);
+            type.setOrl(orl);
+            try{
+                String href = li.select(".interval01-list-cars-infor p:eq(0) a").attr("href");
+                Pattern p = Pattern.compile("/spec/(.*?)/#pvareaid.*?");
+                Matcher m = p.matcher(href);
+                if(m.matches()) {
+                    type.setId(Integer.parseInt( m.group(1)));
+                }
+            }catch (Exception e){
+                System.out.println("抓取id出错");
+            }
+            type.setName(li.select(".interval01-list-cars-infor p:eq(0) a").text());
+            String p2 = li.select(".interval01-list-cars-infor p:eq(1)").html();
+            if(p2.indexOf("停产在售")!=-1){
+                type.setState("停产在售");
+            }else{
+                type.setState("在售");
+            }
+            if(p2.indexOf("减税")!=-1){
+                type.setTax("减税");
+            }
+            //处理多描述的情况
+            Elements spans = li.select(".interval01-list-cars-infor p:eq(2) span");
+            StringBuffer drivingMode = new StringBuffer();
+            for(int i=0;i<spans.size()-1;i++){
+                drivingMode.append((i==0?"":"/")+spans.get(i).text());
+            }
+            type.setDrivingMode(drivingMode.toString());
+            type.setTransmission(li.select(".interval01-list-cars-infor p:eq(2) span:last-child").text());
+            type.setGroupName(li.parent().previousElementSibling().select(".interval01-list-cars-text").text());
+            type.setGuidePrice(li.select(".interval01-list-guidance div").text());
+
+            System.out.println("type  id:"+type.getId()+"   name:"+type.getName()+"  guideprice: "+type.getGuidePrice()+"  dealerPrice:"+type.getDealerPrice()+
+                    "   DrivingMode:"+type.getDrivingMode()+"   setTransmission:"+type.getTransmission());
+            typeTempMapper.insertSelective(type);
+            orl += 10;
+        }
+    }
+    @Override
+    public void getCarTypeStopSeriesById(int seriesId){
+        try{
+            Document doc = sendCarType(seriesId );
+            decodeCarTypeStopSeriesById(doc,seriesId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void decodeCarTypeStopSeriesById(Document doc,int seriesId){
+        //int SeriesInterId = 19;
+        try {
             Elements trs = doc.select(".Seriess_tab tr");
             int orl = 10;
             for(Element tr:trs){
@@ -57,7 +239,7 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
                 }catch (Exception e){
                     System.out.println("抓取id出错");
                 }
-                type.setSeriesId(SeriesId);
+                type.setSeriesId(seriesId);
                 type.setName(tr.select(".name_d a").text());
                 type.setSecondPrice(tr.select(".price_d span a").text());
                 System.out.println("type  id:"+type.getId()+"   name:"+type.getName()+"  guideprice: "+type.getGuidePrice()+"  dealerPrice:"+type.getDealerPrice()+
@@ -73,144 +255,6 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
 
 
 
-    @Override
-    public void getSeriesImgUrlById(int SeriesId) {
-
-        try {
-            Document doc = Jsoup.connect("http://www.autohome.com.cn/" + SeriesId).get();
-            //生成第三层车系图片信息
-            String imgurl = doc.select(".autoseries-pic-img1 picture img").attr("src");
-            System.out.println("第一种方式:"+imgurl);
-            CarSeriesTemp Series = new CarSeriesTemp();
-            Series.setId(SeriesId);
-            if(imgurl!=null&& (imgurl.indexOf("http")!=-1)){
-                Series.setImgurl(imgurl);
-                seriesTempMapper.updateByPrimaryKeySelective(Series);
-                return;
-            }
-            //没有取到则用第二种方式
-            imgurl = doc.select(".models_info dt a img").attr("src");
-            System.out.println("第一种未取到图片采用第二种方式:"+imgurl);
-            if(imgurl!=null&& (imgurl.indexOf("http")!=-1)){
-                Series.setImgurl(imgurl);
-                seriesTempMapper.updateByPrimaryKeySelective(Series);
-                return;
-            }
-            if(imgurl==null || (imgurl.indexOf("http")==-1)){
-                throw new Exception("两种方式都没有获取图片");
-            }
-        } catch (Exception e) {
-            System.out.println("生成第三层车系图片信息出错 Series:" + SeriesId + "  " + e.getMessage());
-        }
-
-    }
-
-
-
-
-    @Override
-    public void getCarTypeStopSaleById(int SeriesId){
-        //int SeriesInterId = 19;
-        try {
-            Document doc = Jsoup.connect("http://www.autohome.com.cn/"+ SeriesId).get();
-            //配置正常在售车系的html模板
-            Elements as = doc.select("#drop2 ul li a");
-            System.out.println(as.size());
-            for (Element a : as) {
-                String yid = a.attr("data");
-                //System.out.println(yid);
-                String response = HttpUtil.sendGet("http://www.autohome.com.cn/ashx/series_allspec.ashx?s=" + SeriesId + "&y=" + yid + "&l=3");
-                JSONObject resJson = JSONObject.parseObject(response);
-                JSONArray specArr = resJson.getJSONArray("Spec");
-
-                for (int i = 0; i < specArr.size(); i++) {
-                    CarTypeTemp type = new CarTypeTemp();
-                    JSONObject typeJson = specArr.getJSONObject(i);
-                    System.out.println(typeJson);
-                    type.setOrl(i*10+10);
-                    try {
-                        type.setId(typeJson.getIntValue("Id"));
-                    }catch (Exception e){
-                        System.out.println("获取id失败");
-                    }
-                    type.setSeriesId(SeriesId);
-                    type.setDrivingMode(typeJson.getString("DrivingModeName"));
-                    type.setTransmission(typeJson.getString("Transmission"));
-                    type.setGuidePrice(typeJson.getString("Price"));
-                    type.setSecondPrice(typeJson.getString("Price2Sc"));
-                    type.setName(typeJson.getString("Name"));
-                    type.setGroupName(typeJson.getString("GroupName"));
-                    type.setTax(typeJson.getBoolean("ShowTaxRelief")==true?"减税":null);
-                    type.setState("停售");
-                    System.out.println("type  id:"+type.getId()+"   name:"+type.getName()+"  guideprice: "+type.getGuidePrice()+"  dealerPrice:"+type.getDealerPrice()+
-                            "   DrivingMode:"+type.getDrivingMode()+"   setTransmission:"+type.getTransmission());
-                    typeTempMapper.insertSelective(type);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-    @Override
-    public void getCarTypeOnSaleById( int SeriesId ){
-        //int SeriesInterId = 19;
-        try{
-            Document doc = Jsoup.connect("http://www.autohome.com.cn/" + SeriesId).get();
-            //生成第四层信息
-            Elements lis = doc.select("#speclist .current ul li");
-            int orl = 10;
-            for (Element li : lis) {
-                String liStr = li.html();
-                // System.out.println("--------------------------------------------------");
-                // System.out.println(liStr);
-                CarTypeTemp type = new CarTypeTemp();
-                type.setSeriesId(SeriesId);
-                type.setOrl(orl);
-                try{
-                    String href = li.select(".interval01-list-cars-infor p:eq(0) a").attr("href");
-                    Pattern p = Pattern.compile("/spec/(.*?)/#pvareaid.*?");
-                    Matcher m = p.matcher(href);
-                    if(m.matches()) {
-                        type.setId(Integer.parseInt( m.group(1)));
-                    }
-                }catch (Exception e){
-                    System.out.println("抓取id出错");
-                }
-                type.setName(li.select(".interval01-list-cars-infor p:eq(0) a").text());
-                String p2 = li.select(".interval01-list-cars-infor p:eq(1)").html();
-                if(p2.indexOf("停产在售")!=-1){
-                    type.setState("停产在售");
-                }else{
-                    type.setState("在售");
-                }
-                if(p2.indexOf("减税")!=-1){
-                    type.setTax("减税");
-                }
-                //处理多描述的情况
-                Elements spans = li.select(".interval01-list-cars-infor p:eq(2) span");
-                StringBuffer drivingMode = new StringBuffer();
-                for(int i=0;i<spans.size()-1;i++){
-                    drivingMode.append((i==0?"":"/")+spans.get(i).text());
-                }
-                type.setDrivingMode(drivingMode.toString());
-                type.setTransmission(li.select(".interval01-list-cars-infor p:eq(2) span:last-child").text());
-                type.setGroupName(li.parent().previousElementSibling().select(".interval01-list-cars-text").text());
-                type.setGuidePrice(li.select(".interval01-list-guidance div").text());
-
-                System.out.println("type  id:"+type.getId()+"   name:"+type.getName()+"  guideprice: "+type.getGuidePrice()+"  dealerPrice:"+type.getDealerPrice()+
-                        "   DrivingMode:"+type.getDrivingMode()+"   setTransmission:"+type.getTransmission());
-                typeTempMapper.insertSelective(type);
-                orl += 10;
-            }
-
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
 
     @Override
     public void getCarBrandByCaption( String lettter){
@@ -313,9 +357,7 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
                         }
                         orl += 10;
                     }
-
                 }
-
             }
 
         } catch (Exception e) {

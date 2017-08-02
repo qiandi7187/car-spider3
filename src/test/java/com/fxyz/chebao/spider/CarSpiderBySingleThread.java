@@ -15,6 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
@@ -53,64 +54,32 @@ public class CarSpiderBySingleThread {
         }
     }
 
-    /**
-     * 获取在售车系的图片
-     * 两种抓取方式 一种在售模板 一种停售模板
-     */
-    @Test
-    public void getSeriesUrl(){
-        List<CarSeriesTemp> Seriess = carSpiderService.getAllSeriesTemp();
-        System.out.println(Seriess.size());
-        for(CarSeriesTemp Series:Seriess){
-            int SeriesId = Series.getId();
-            carSpiderService.getSeriesImgUrlById(SeriesId);
-        }
-    }
-
 
     /**
      * 利用jsoup进行爬虫
      * 获取第四层 在售车系 在售车型信息
      */
     @Test
-    public void getCarTypeOnSale(){
+    public void getCarTypeOnSale() throws Exception {
         List<CarSeriesTemp> Seriess = carSpiderService.getAllSeriesTemp();
         System.out.println(Seriess.size());
-        int i = 0;
-        for(CarSeriesTemp Series:Seriess){
-            carSpiderService.getCarTypeOnSaleById(Series.getId());
-            i++;
+        for(CarSeriesTemp series:Seriess){
+            Document doc = carSpiderService.sendCarType(series.getId());
           // System.out.println(i+"    SeriesInterId:"+Series.getInterId());
-        }
-    }
-
-    /**
-     * 获取在售车系 停售车型信息
-     */
-    @Test
-    public void getCarTypeStopSale(){
-        List<CarSeriesTemp> Seriess = carSpiderService.getAllSeriesTemp();
-        System.out.println(Seriess.size());
-        for(CarSeriesTemp Series:Seriess){
-            carSpiderService.getCarTypeStopSaleById(Series.getId());
-        }
-    }
-
-    /**
-     * 获取停售车型信息
-     */
-    @Test
-    public void getCarTypeStopSeries(){
-        List<CarSeriesTemp> Seriess = carSpiderService.getAllSeriesTemp();
-        System.out.println(Seriess.size());
-        for(CarSeriesTemp Series:Seriess){
-            carSpiderService.getCarTypeStopSeriesById(Series.getId());
+            //获取在售车系的图片
+            carSpiderService.deocdeSeriesImgUrlById(doc,series.getId());
+            //在售车系 在售车型信息
+            carSpiderService.decodeCarTypeOnSaleById(doc,series.getId());
+            //获取在售车系 停售车型信息
+            carSpiderService.decodeCarTypeStopSaleById(doc,series.getId());
+            //获取停售车型信息
+            carSpiderService.decodeCarTypeStopSeriesById(doc,series.getId());
         }
     }
 
 
     /**
-     * 在数据从临时表导入正式表后
+     * 在数据从临时表导入正式表后  以id命名
      * 根据SeriesID从数据库获取图片地址 并将图片保存到本地
      */
     @Test

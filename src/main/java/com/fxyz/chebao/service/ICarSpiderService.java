@@ -1,9 +1,10 @@
 package com.fxyz.chebao.service;
 
-import com.fxyz.chebao.pojo.Group;
 import com.fxyz.chebao.pojo.carSpider.CarSeries;
 import com.fxyz.chebao.pojo.carSpider.CarSeriesTemp;
+import org.jsoup.nodes.Document;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -61,4 +62,15 @@ public interface ICarSpiderService {
      */
     public void copySeriesUrlById(String filepath,String filename ,String imgurl);
 
-    }
+    Document sendSeriesImgUrlById(int seriesId) throws IOException;
+
+    void deocdeSeriesImgUrlById(Document doc,Integer seriesId );
+
+    void decodeCarTypeStopSaleById(Document doc,Integer seriesId) throws Exception;
+
+    Document sendCarType(int seriesId) throws IOException;
+
+    void decodeCarTypeOnSaleById(Document doc,int seriesId);
+
+    void decodeCarTypeStopSeriesById(Document doc,int seriesId);
+}
