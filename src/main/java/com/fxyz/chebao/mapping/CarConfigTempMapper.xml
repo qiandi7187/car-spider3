@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fxyz.chebao.mapper.CarConfigTempMapper" >
+  <resultMap id="BaseResultMap" type="com.fxyz.chebao.pojo.carSpider.CarConfigTemp" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="item_type_name" property="itemTypeName" jdbcType="VARCHAR" />
+    <result column="item_name" property="itemName" jdbcType="VARCHAR" />
+    <result column="type_id" property="typeId" jdbcType="INTEGER" />
+    <result column="value" property="value" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, item_type_name, item_name, type_id, value
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from car_config_temp
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from car_config_temp
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.fxyz.chebao.pojo.carSpider.CarConfigTemp" >
+    insert into car_config_temp (id, item_type_name, item_name, 
+      type_id, value)
+    values (#{id,jdbcType=INTEGER}, #{itemTypeName,jdbcType=VARCHAR}, #{itemName,jdbcType=VARCHAR}, 
+      #{typeId,jdbcType=INTEGER}, #{value,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id ="insertBatch" parameterType="java.util.List" >
+    insert into car_config_temp (id,item_type_name, item_name,type_id,value) values
+    <foreach item="item" collection="list" separator=",">
+      (#{item.id,jdbcType=INTEGER},#{item.itemTypeName,jdbcType=VARCHAR}, #{item.itemName,jdbcType=VARCHAR}, #{item.typeId,jdbcType=INTEGER}, #{item.value,jdbcType=VARCHAR})
+    </foreach>
+  </insert >
+
+
+  <insert id="insertSelective" parameterType="com.fxyz.chebao.pojo.carSpider.CarConfigTemp" >
+    insert into car_config_temp
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="itemTypeName != null" >
+        item_type_name,
+      </if>
+      <if test="itemName != null" >
+        item_name,
+      </if>
+      <if test="typeId != null" >
+        type_id,
+      </if>
+      <if test="value != null" >
+        value,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="itemTypeName != null" >
+        #{itemTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="itemName != null" >
+        #{itemName,jdbcType=VARCHAR},
+      </if>
+      <if test="typeId != null" >
+        #{typeId,jdbcType=INTEGER},
+      </if>
+      <if test="value != null" >
+        #{value,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fxyz.chebao.pojo.carSpider.CarConfigTemp" >
+    update car_config_temp
+    <set >
+      <if test="itemTypeName != null" >
+        item_type_name = #{itemTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="itemName != null" >
+        item_name = #{itemName,jdbcType=VARCHAR},
+      </if>
+      <if test="typeId != null" >
+        type_id = #{typeId,jdbcType=INTEGER},
+      </if>
+      <if test="value != null" >
+        value = #{value,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fxyz.chebao.pojo.carSpider.CarConfigTemp" >
+    update car_config_temp
+    set item_type_name = #{itemTypeName,jdbcType=VARCHAR},
+      item_name = #{itemName,jdbcType=VARCHAR},
+      type_id = #{typeId,jdbcType=INTEGER},
+      value = #{value,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,10 +1,9 @@
-package com.fxyz.chebao.service.impl;
+package com.fxyz.chebao.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fxyz.chebao.mapper.*;
 import com.fxyz.chebao.pojo.carSpider.*;
-import com.fxyz.chebao.service.ICarSpiderService;
 import com.util.HttpUtil;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -13,7 +12,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,8 +21,8 @@ import java.util.regex.Pattern;
 
 
 @Service
-public class CarSpiderServiceImpl implements ICarSpiderService {
-    private static Logger logger = Logger.getLogger(CarSpiderServiceImpl.class);
+public class CarTypeSpiderService {
+    private static Logger logger = Logger.getLogger(CarTypeSpiderService.class);
 
     @Autowired
     CarBrandTempMapper brandTempMapper;
@@ -40,7 +38,7 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
 
 
     //将发送和接收拆分以支持异步模式
-    @Override
+
     public void getSeriesImgUrlById(int seriesId) {
         try {
             Document doc = sendSeriesImgUrlById(seriesId);
@@ -51,11 +49,11 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
         }
 
     }
-    @Override
+
     public Document sendSeriesImgUrlById(int seriesId) throws IOException {
         return Jsoup.connect("http://www.autohome.com.cn/" + seriesId).get();
     }
-    @Override
+
     public void deocdeSeriesImgUrlById(Document doc,Integer seriesId ) {
         try {
             //  Document doc = Jsoup.parse(response);
@@ -91,9 +89,6 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
 
     }
 
-
-
-    @Override
     public void getCarTypeStopSaleById(int seriesId){
         //int SeriesInterId = 19;
         try {
@@ -105,11 +100,11 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
 
     }
 
-    @Override
+
     public Document sendCarType(int SeriesId) throws IOException {
         return Jsoup.connect("http://www.autohome.com.cn/"+ SeriesId).get();
     }
-    @Override
+
     public void decodeCarTypeStopSaleById(Document doc,Integer seriesId) throws Exception {
         Elements as = doc.select("#drop2 ul li a");
         for (Element a : as) {
@@ -145,9 +140,6 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
         }
     }
 
-
-
-    @Override
     public void getCarTypeOnSaleById( int seriesId ){
         //int SeriesInterId = 19;
         try{
@@ -159,7 +151,6 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
 
     }
 
-    @Override
     public void decodeCarTypeOnSaleById(Document doc,int seriesId){
         //生成第四层信息
         Elements lis = doc.select("#speclist .current ul li");
@@ -208,7 +199,7 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
             orl += 10;
         }
     }
-    @Override
+
     public void getCarTypeStopSeriesById(int seriesId){
         try{
             Document doc = sendCarType(seriesId );
@@ -218,11 +209,11 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
         }
     }
 
-    @Override
+
     public void decodeCarTypeStopSeriesById(Document doc,int seriesId){
         //int SeriesInterId = 19;
         try {
-            Elements trs = doc.select(".Seriess_tab tr");
+            Elements trs = doc.select(".models_tab tr");
             int orl = 10;
             for(Element tr:trs){
                 CarTypeTemp type = new CarTypeTemp();
@@ -255,9 +246,6 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
     }
 
 
-
-
-    @Override
     public void getCarBrandByCaption( String lettter){
         //String lettter = "A";
         try {
@@ -367,7 +355,6 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
 
     }
 
-    @Override
     public List<CarSeriesTemp> getAllSeriesTemp(){
         CarSeriesTempExample all = new CarSeriesTempExample();
         List<CarSeriesTemp> series = seriesTempMapper.selectByExample(all);
@@ -375,7 +362,7 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
 
     }
 
-    @Override
+
     public List<CarSeries> getAllSeries(){
         CarSeriesExample all = new CarSeriesExample();
         List<CarSeries> series = carSeriesMapper.selectByExample(all);
@@ -384,7 +371,13 @@ public class CarSpiderServiceImpl implements ICarSpiderService {
     }
 
 
-    @Override
+    public List<CarTypeTemp> getAllTypeTemp(){
+        CarTypeTempExample all = new CarTypeTempExample();
+        List<CarTypeTemp> types = typeTempMapper.selectByExample(all);
+        return  types;
+    }
+
+
     public void copySeriesUrlById(String filepath,String filename ,String imgurl){
         //int SeriesId = 18;
         //String filepath="D:\\imgs";

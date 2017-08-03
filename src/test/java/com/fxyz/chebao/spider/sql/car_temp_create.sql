@@ -84,3 +84,34 @@ CREATE TABLE `car_type_temp` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
+SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for car_config_temp
+-- ----------------------------
+DROP TABLE IF EXISTS `car_config_temp`;
+CREATE TABLE `car_config_temp` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `item_type_name` varchar(255) DEFAULT NULL,
+  `item_name` varchar(255) DEFAULT NULL,
+  `type_id` int(8) DEFAULT NULL,
+  `value` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2983507 DEFAULT CHARSET=utf8;
+
+
+
+SET FOREIGN_KEY_CHECKS=0;
+-- ----------------------------
+-- Table structure for car_config_item_temp
+-- ----------------------------
+DROP TABLE IF EXISTS `car_config_item_temp`;
+CREATE TABLE `car_config_item_temp` (
+  `id` int(8) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `level` int(1) DEFAULT NULL,
+  `p_name` varchar(255) DEFAULT NULL,
+  `sort` int(8) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=846 DEFAULT CHARSET=utf8;
