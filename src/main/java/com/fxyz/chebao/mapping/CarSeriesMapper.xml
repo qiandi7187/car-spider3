@@ -4,10 +4,12 @@
   <resultMap id="BaseResultMap" type="com.fxyz.chebao.pojo.carSpider.CarSeries" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
-    <result column="sell_id" property="sellId" jdbcType="INTEGER" />
+    <result column="manu_id" property="manuId" jdbcType="INTEGER" />
     <result column="status" property="status" jdbcType="INTEGER" />
     <result column="sort" property="sort" jdbcType="INTEGER" />
     <result column="imgurl" property="imgurl" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="valid" property="valid" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Example_Where_Clause" >
@@ -40,7 +42,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, name, sell_id, status, sort, imgurl, valid
+    id, name, manu_id, status, sort, imgurl, create_time, update_time, valid
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.fxyz.chebao.pojo.carSpider.CarSeriesExample" >
     select
@@ -68,12 +70,14 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.fxyz.chebao.pojo.carSpider.CarSeries" >
-    insert into car_series (id, name, sell_id, 
+    insert into car_series (id, name, manu_id, 
       status, sort, imgurl, 
-      valid)
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{sellId,jdbcType=INTEGER}, 
+      create_time, update_time, valid
+      )
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{manuId,jdbcType=INTEGER}, 
       #{status,jdbcType=INTEGER}, #{sort,jdbcType=INTEGER}, #{imgurl,jdbcType=VARCHAR}, 
-      #{valid,jdbcType=INTEGER})
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{valid,jdbcType=INTEGER}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.fxyz.chebao.pojo.carSpider.CarSeries" >
     insert into car_series
@@ -84,8 +88,8 @@
       <if test="name != null" >
         name,
       </if>
-      <if test="sellId != null" >
-        sell_id,
+      <if test="manuId != null" >
+        manu_id,
       </if>
       <if test="status != null" >
         status,
@@ -95,6 +99,12 @@
       </if>
       <if test="imgurl != null" >
         imgurl,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
       </if>
       <if test="valid != null" >
         valid,
@@ -107,8 +117,8 @@
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
       </if>
-      <if test="sellId != null" >
-        #{sellId,jdbcType=INTEGER},
+      <if test="manuId != null" >
+        #{manuId,jdbcType=INTEGER},
       </if>
       <if test="status != null" >
         #{status,jdbcType=INTEGER},
@@ -118,6 +128,12 @@
       </if>
       <if test="imgurl != null" >
         #{imgurl,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="valid != null" >
         #{valid,jdbcType=INTEGER},
@@ -130,8 +146,8 @@
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
       </if>
-      <if test="sellId != null" >
-        sell_id = #{sellId,jdbcType=INTEGER},
+      <if test="manuId != null" >
+        manu_id = #{manuId,jdbcType=INTEGER},
       </if>
       <if test="status != null" >
         status = #{status,jdbcType=INTEGER},
@@ -142,6 +158,12 @@
       <if test="imgurl != null" >
         imgurl = #{imgurl,jdbcType=VARCHAR},
       </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
       <if test="valid != null" >
         valid = #{valid,jdbcType=INTEGER},
       </if>
@@ -151,10 +173,12 @@
   <update id="updateByPrimaryKey" parameterType="com.fxyz.chebao.pojo.carSpider.CarSeries" >
     update car_series
     set name = #{name,jdbcType=VARCHAR},
-      sell_id = #{sellId,jdbcType=INTEGER},
+      manu_id = #{manuId,jdbcType=INTEGER},
       status = #{status,jdbcType=INTEGER},
       sort = #{sort,jdbcType=INTEGER},
       imgurl = #{imgurl,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
       valid = #{valid,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>

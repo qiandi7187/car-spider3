@@ -1,5 +1,6 @@
 package com.fxyz.chebao.spider;
 
+import com.fxyz.chebao.pojo.carSpider.CarSeries;
 import com.fxyz.chebao.pojo.carSpider.CarSeriesTemp;
 import com.fxyz.chebao.pojo.carSpider.CarSpiderErr;
 import com.fxyz.chebao.pojo.carSpider.CarTypeTemp;
@@ -111,11 +112,11 @@ public class CarSpiderByThreadPool {
                     //获取在售车系的图片
                     carTypeSpiderService.deocdeSeriesImgUrlById(doc,SeriesId);
                     //在售车系 在售车型信息
-                    carTypeSpiderService.decodeCarTypeOnSaleById(doc,SeriesId);
+                   /* carTypeSpiderService.decodeCarTypeOnSaleById(doc,SeriesId);
                     //获取在售车系 停售车型信息
                     carTypeSpiderService.decodeCarTypeStopSaleById(doc,SeriesId);
                     //获取停售车型信息
-                    carTypeSpiderService.decodeCarTypeStopSeriesById(doc,SeriesId);
+                    carTypeSpiderService.decodeCarTypeStopSeriesById(doc,SeriesId);*/
                 }catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -127,9 +128,26 @@ public class CarSpiderByThreadPool {
 
 
     /**
+     * 在数据从临时表导入正式表后
+     * 根据SeriesID从数据库获取图片地址 并将图片保存到本地
+     */
+    @Test
+    public void a0003_copySeriesUrl(){
+        List<CarSeries> Seriess = carTypeSpiderService.getAllSeries();
+        System.out.println(Seriess.size());
+        int index = 0;
+        for(CarSeries Series:Seriess){
+            carTypeSpiderService.copySeriesUrlById("D:\\imgs",Series.getId()+".jpg",Series.getImgurl());
+            System.out.println(index++);
+        }
+    }
+
+
+
+    /**
+     * 获取车型的配置信息
      * 解析json
      * 多线程  异步回调模式  按批次控制并发数量
-     *  获取车型的配置信息
      */
     @Test
     public void a0010_getTypeConfig(){
@@ -204,7 +222,7 @@ public class CarSpiderByThreadPool {
      * 为configItem进行排序
      */
     @Test
-    public void sortConfigItem(){
+    public void a0011_sortConfigItem(){
         carConfigSpiderService.sortConfigItem();
     }
 
