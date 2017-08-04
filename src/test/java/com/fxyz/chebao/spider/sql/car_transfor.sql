@@ -32,10 +32,10 @@ update car_type set price =  '暂无' where price = '<span>暂无</span>' ;
 TRUNCATE TABLE car_config_item;
 alter table `car_config_item` add inter_id int default 0 ;
 	/*一级条目*/
-INSERT into `car_config_item`(inter_id,name,level,sort,valid) select a.id,a.`name`,a.`level`,a.sort,0 from  car_config_item_temp a where a.`level`=1;
+INSERT into `car_config_item`(inter_id,name,level,sort,valid,create_time) select a.id,a.`name`,a.`level`,a.sort,0,now() from  car_config_item_temp a where a.`level`=1;
 		/*二级条目*/
-INSERT into `car_config_item`(inter_id,name,level,sort,valid,pid) select a.id,a.`name`,a.`level`,a.sort,0,
-(SELECT max(id) from car_config_item where name=a.p_name) pid
+INSERT into `car_config_item`(inter_id,name,level,sort,valid,pid,create_time) select a.id,a.`name`,a.`level`,a.sort,0,
+(SELECT max(id) from car_config_item where name=a.p_name) pid,,now()
 from  car_config_item_temp a where a.`level`=2;
 /*配置详参*/
 TRUNCATE TABLE car_config;
