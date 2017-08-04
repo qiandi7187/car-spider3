@@ -35,11 +35,14 @@ alter table `car_config_item` add inter_id int default 0 ;
 INSERT into `car_config_item`(inter_id,name,level,sort,valid,create_time) select a.id,a.`name`,a.`level`,a.sort,0,now() from  car_config_item_temp a where a.`level`=1;
 		/*二级条目*/
 INSERT into `car_config_item`(inter_id,name,level,sort,valid,pid,create_time) select a.id,a.`name`,a.`level`,a.sort,0,
-(SELECT max(id) from car_config_item where name=a.p_name) pid,,now()
+(SELECT max(id) from car_config_item where name=a.p_name) pid,now()
 from  car_config_item_temp a where a.`level`=2;
 /*配置详参*/
 TRUNCATE TABLE car_config;
-INSERT into car_config(item_id,type_id,value) select b.id item_id,a.type_id,a.`value` from  car_config_temp a  join car_config_item b on a.item_name = b.name;
+INSERT into car_config(item_id,type_id,value)
+select (select max(id) from car_config_item where name = a.item_name and `level`=2 ) item_id ,
+(select max(id) from car_type where inter_id = a.type_id ) type_id,a.`value` from  car_config_temp a ;
+
 
 /*删除中间字段*/
 alter table car_brand drop column inter_id  ;
