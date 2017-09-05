@@ -24,7 +24,7 @@
         </javaTypeResolver>
 
         <!-- targetProject:生成PO类的位置 -->
-        <javaModelGenerator targetPackage="com.fxyz.chebao.pojo.carSpider"
+        <javaModelGenerator targetPackage="com.fxyz.chebao.pojo.petrol"
                             targetProject="src\main\java">
             <!-- enableSubPackages:是否让schema作为包的后缀 -->
             <property name="enableSubPackages" value="false" />
@@ -45,7 +45,7 @@
             <property name="enableSubPackages" value="false" />
         </javaClientGenerator>
         <!-- 指定数据库表 -->
-        <table tableName="car_series" domainObjectName="CarSeries" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="true" selectByExampleQueryId="false"  >
+        <table tableName="petrol_price" domainObjectName="PetrolPrice" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="true" selectByExampleQueryId="false"  >
             <!-- <property name="GroupActualColumnNames" value="false"/>
              <generatedKey column="id" sqlStatement="Mysql"/>-->
         </table>

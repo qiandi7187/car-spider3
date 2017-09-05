@@ -26,6 +26,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 主动爬还是放在junit来执行，另有自动任务采用spring定时器
  * Created by qiandi on 2017/6/27.
  * 线程池方式读取信息
  * 该种存在并发问题，考虑最长20分钟可跑出结果，暂时启用该方法
@@ -44,7 +45,9 @@ public class CarSpiderByThreadPool {
 
     private static Logger logger = Logger.getLogger(CarSpiderByThreadPool.class);
 
-
+    /**
+     * 打印日志
+     */
     @Before
     public void loadConfig(){
         try {
