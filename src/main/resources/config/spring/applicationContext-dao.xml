@@ -15,7 +15,7 @@
             <list>
                 <value>classpath:config/property/jdbc.properties</value>
                 <value>classpath:config/property/redis.properties</value>
-                <value>classpath:config/property/mongodb.properties</value>
+             <!--   <value>classpath:config/property/mongodb.properties</value>-->
             </list>
         </property>
     </bean>
@@ -45,7 +45,7 @@
         <property name="jedisConnectionFactory" ref="jedisConnectionFactory"/>
     </bean>
     <!-- mongo对象 -->
-    <mongo:mongo-client id="mongo" replica-set="${mongo.hostport}">
+   <!-- <mongo:mongo-client id="mongo" replica-set="${mongo.hostport}">
         <mongo:client-options connections-per-host="${mongo.connectionsPerHost}"
                               threads-allowed-to-block-for-connection-multiplier="${mongo.threadsAllowedToBlockForConnectionMultiplier}"
                               connect-timeout="${mongo.connectTimeout}"
@@ -56,10 +56,10 @@
 
     <mongo:db-factory  id="mongoDbFactory" dbname="${mongo.databaseName}" mongo-ref="mongo" />
 
-    <!-- 只要使用这个调用相应的方法操作 -->
+    &lt;!&ndash; 只要使用这个调用相应的方法操作 &ndash;&gt;
     <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
         <constructor-arg name="mongoDbFactory" ref="mongoDbFactory" />
-    </bean>
+    </bean>-->
     <!--设置数据源c3p0-->
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="${jdbc.driver}"/>

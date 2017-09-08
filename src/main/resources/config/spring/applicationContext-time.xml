@@ -17,8 +17,7 @@
 
     <bean id="PetrolPriceSpiderService" class="com.fxyz.chebao.service.PetrolPriceSpiderService"></bean>
     <task:scheduled-tasks>
-
-      <!--  <task:scheduled ref="PetrolPriceSpiderService" method="getNewPetrolPrice" fixed-delay="60000" />-->
+       <!-- <task:scheduled ref="PetrolPriceSpiderService" method="getNewPetrolPrice" fixed-delay="60000" />-->
         <task:scheduled ref="PetrolPriceSpiderService" method="getNewPetrolPrice" cron="0 0 0,7,21 * * ?"/>
         <!--addRobotOrderClass-->
     </task:scheduled-tasks>

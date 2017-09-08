@@ -15,7 +15,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-
+/**
+ * 定时自动爬取汽油价格  后期可考虑多种途径
+ */
 @Service
 public class PetrolPriceSpiderService {
     private static Logger logger = Logger.getLogger(PetrolPriceSpiderService.class);
