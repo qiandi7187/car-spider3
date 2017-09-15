@@ -1,7 +1,7 @@
 package com.fxyz.chebao.mapper;
 
-import com.fxyz.chebao.pojo.carSpider.CarTypeTemp;
-import com.fxyz.chebao.pojo.carSpider.CarTypeTempExample;
+import com.fxyz.chebao.pojo.car.CarTypeTemp;
+import com.fxyz.chebao.pojo.car.CarTypeTempExample;
 import java.util.List;
 
 public interface CarTypeTempMapper {

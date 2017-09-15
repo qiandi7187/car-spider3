@@ -6,7 +6,7 @@ import com.fxyz.chebao.mapper.CarConfigItemTempMapper;
 import com.fxyz.chebao.mapper.CarConfigTempMapper;
 import com.fxyz.chebao.mapper.CarSpiderErrMapper;
 import com.fxyz.chebao.mapper.CarTypeTempMapper;
-import com.fxyz.chebao.pojo.carSpider.*;
+import com.fxyz.chebao.pojo.car.*;
 import com.util.HttpUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,7 @@
 package com.fxyz.chebao.spider;
 
-import com.fxyz.chebao.pojo.carSpider.CarSeries;
-import com.fxyz.chebao.pojo.carSpider.CarSeriesTemp;
+import com.fxyz.chebao.pojo.car.CarSeries;
+import com.fxyz.chebao.pojo.car.CarSeriesTemp;
 import com.fxyz.chebao.service.CarTypeSpiderService;
 import org.junit.Before;
 import org.junit.Test;
@@ -123,7 +123,7 @@ public class CarSpiderBySingleThread {
         System.out.println(Seriess.size());
         int index = 0;
         for(CarSeries Series:Seriess){
-            carSpiderService.copySeriesUrlById("D:\\imgs",Series.getId()+".jpg",Series.getImgurl());
+            carSpiderService.translateImgUrlToFile("D:\\imgs",Series.getId()+".jpg",Series.getImgurl());
             System.out.println(index++);
         }
     }

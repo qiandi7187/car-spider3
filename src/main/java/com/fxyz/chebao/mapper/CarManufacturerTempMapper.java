@@ -1,6 +1,6 @@
 package com.fxyz.chebao.mapper;
 
-import com.fxyz.chebao.pojo.carSpider.CarManufacturerTemp;
+import com.fxyz.chebao.pojo.car.CarManufacturerTemp;
 
 public interface CarManufacturerTempMapper {
     int deleteByPrimaryKey(Integer id);

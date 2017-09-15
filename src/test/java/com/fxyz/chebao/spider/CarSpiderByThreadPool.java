@@ -1,11 +1,10 @@
 package com.fxyz.chebao.spider;
 
-import com.fxyz.chebao.pojo.carSpider.CarSeries;
-import com.fxyz.chebao.pojo.carSpider.CarSeriesTemp;
-import com.fxyz.chebao.pojo.carSpider.CarSpiderErr;
-import com.fxyz.chebao.pojo.carSpider.CarTypeTemp;
+import com.fxyz.chebao.pojo.car.*;
 import com.fxyz.chebao.service.CarConfigSpiderService;
 import com.fxyz.chebao.service.CarTypeSpiderService;
+import com.util.PropertyUtils;
+import com.util.StringUtil;
 import org.apache.log4j.Logger;
 import org.jsoup.nodes.Document;
 import org.junit.Before;
@@ -19,6 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Log4jConfigurer;
 
 import java.io.FileNotFoundException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -115,11 +115,11 @@ public class CarSpiderByThreadPool {
                     //获取在售车系的图片
                     carTypeSpiderService.deocdeSeriesImgUrlById(doc,SeriesId);
                     //在售车系 在售车型信息
-                   /* carTypeSpiderService.decodeCarTypeOnSaleById(doc,SeriesId);
+                    carTypeSpiderService.decodeCarTypeOnSaleById(doc,SeriesId);
                     //获取在售车系 停售车型信息
                     carTypeSpiderService.decodeCarTypeStopSaleById(doc,SeriesId);
                     //获取停售车型信息
-                    carTypeSpiderService.decodeCarTypeStopSeriesById(doc,SeriesId);*/
+                    carTypeSpiderService.decodeCarTypeStopSeriesById(doc,SeriesId);
                 }catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -130,17 +130,36 @@ public class CarSpiderByThreadPool {
 
 
 
+
+    /**
+     * 在数据从临时表导入表前
+     * 根据BrandId从数据库获取图片地址 并将图片保存到本地
+     */
+    @Test
+    public void a0003_copyBrandUrl(){
+        List<CarBrandTemp> brands = carTypeSpiderService.getAllBrandTemp();
+        System.out.println(brands.size());
+        for(CarBrandTemp brand:brands){
+            String filename = "/carBrand/"+new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + StringUtil.getRandom(4)+"_.jpg";
+            carTypeSpiderService.translateImgUrlToFile("D:\\imgs",filename,brand.getImgurl());
+            brand.setImgurl(filename);
+            carTypeSpiderService.updateBrandByPrimaryKey(brand);
+        }
+    }
+
+
+
     /**
      * 在数据从临时表导入正式表后
      * 根据SeriesID从数据库获取图片地址 并将图片保存到本地
      */
     @Test
-    public void a0003_copySeriesUrl(){
+    public void a0004_copySeriesUrl(){
         List<CarSeries> Seriess = carTypeSpiderService.getAllSeries();
         System.out.println(Seriess.size());
         int index = 0;
         for(CarSeries Series:Seriess){
-            carTypeSpiderService.copySeriesUrlById("D:\\imgs",Series.getId()+".jpg",Series.getImgurl());
+            carTypeSpiderService.translateImgUrlToFile("D:\\imgs",Series.getId()+".jpg",Series.getImgurl());
             System.out.println(index++);
         }
     }

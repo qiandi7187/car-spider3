@@ -1,7 +1,7 @@
 package com.fxyz.chebao.mapper;
 
-import com.fxyz.chebao.pojo.carSpider.CarSpiderErr;
-import com.fxyz.chebao.pojo.carSpider.CarSpiderErrExample;
+import com.fxyz.chebao.pojo.car.CarSpiderErr;
+import com.fxyz.chebao.pojo.car.CarSpiderErrExample;
 import java.util.List;
 
 public interface CarSpiderErrMapper {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.fxyz.chebao.mapper.CarConfigTempMapper" >
-  <resultMap id="BaseResultMap" type="com.fxyz.chebao.pojo.carSpider.CarConfigTemp" >
+  <resultMap id="BaseResultMap" type="com.fxyz.chebao.pojo.car.CarConfigTemp" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="item_type_name" property="itemTypeName" jdbcType="VARCHAR" />
     <result column="item_name" property="itemName" jdbcType="VARCHAR" />
@@ -21,7 +21,7 @@
     delete from car_config_temp
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.fxyz.chebao.pojo.carSpider.CarConfigTemp" >
+  <insert id="insert" parameterType="com.fxyz.chebao.pojo.car.CarConfigTemp" >
     insert into car_config_temp (id, item_type_name, item_name, 
       type_id, value)
     values (#{id,jdbcType=INTEGER}, #{itemTypeName,jdbcType=VARCHAR}, #{itemName,jdbcType=VARCHAR}, 
@@ -36,7 +36,7 @@
   </insert >
 
 
-  <insert id="insertSelective" parameterType="com.fxyz.chebao.pojo.carSpider.CarConfigTemp" >
+  <insert id="insertSelective" parameterType="com.fxyz.chebao.pojo.car.CarConfigTemp" >
     insert into car_config_temp
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -73,7 +73,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.fxyz.chebao.pojo.carSpider.CarConfigTemp" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.fxyz.chebao.pojo.car.CarConfigTemp" >
     update car_config_temp
     <set >
       <if test="itemTypeName != null" >
@@ -91,7 +91,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.fxyz.chebao.pojo.carSpider.CarConfigTemp" >
+  <update id="updateByPrimaryKey" parameterType="com.fxyz.chebao.pojo.car.CarConfigTemp" >
     update car_config_temp
     set item_type_name = #{itemTypeName,jdbcType=VARCHAR},
       item_name = #{itemName,jdbcType=VARCHAR},

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.fxyz.chebao.mapper.CarConfigItemTempMapper" >
   <cache type="com.fxyz.cache.redis.RedisCache"/>
-  <resultMap id="BaseResultMap" type="com.fxyz.chebao.pojo.carSpider.CarConfigItemTemp" >
+  <resultMap id="BaseResultMap" type="com.fxyz.chebao.pojo.car.CarConfigItemTemp" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="level" property="level" jdbcType="INTEGER" />
@@ -41,7 +41,7 @@
   <sql id="Base_Column_List" >
     id, name, level, p_name, sort
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.fxyz.chebao.pojo.carSpider.CarConfigItemTempExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.fxyz.chebao.pojo.car.CarConfigItemTempExample" >
     select
     <if test="distinct" >
       distinct
@@ -66,13 +66,13 @@
     delete from car_config_item_temp
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.fxyz.chebao.pojo.carSpider.CarConfigItemTemp" >
+  <insert id="insert" parameterType="com.fxyz.chebao.pojo.car.CarConfigItemTemp" >
     insert into car_config_item_temp (id, name, level, 
       p_name, sort)
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{level,jdbcType=INTEGER}, 
       #{pName,jdbcType=VARCHAR}, #{sort,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.fxyz.chebao.pojo.carSpider.CarConfigItemTemp" >
+  <insert id="insertSelective" parameterType="com.fxyz.chebao.pojo.car.CarConfigItemTemp" >
     insert into car_config_item_temp
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -109,7 +109,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.fxyz.chebao.pojo.carSpider.CarConfigItemTemp" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.fxyz.chebao.pojo.car.CarConfigItemTemp" >
     update car_config_item_temp
     <set >
       <if test="name != null" >
@@ -127,7 +127,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.fxyz.chebao.pojo.carSpider.CarConfigItemTemp" >
+  <update id="updateByPrimaryKey" parameterType="com.fxyz.chebao.pojo.car.CarConfigItemTemp" >
     update car_config_item_temp
     set name = #{name,jdbcType=VARCHAR},
       level = #{level,jdbcType=INTEGER},

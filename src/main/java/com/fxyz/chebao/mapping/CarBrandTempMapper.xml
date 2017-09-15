@@ -1,16 +1,60 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.fxyz.chebao.mapper.CarBrandTempMapper" >
-  <resultMap id="BaseResultMap" type="com.fxyz.chebao.pojo.carSpider.CarBrandTemp" >
+  <resultMap id="BaseResultMap" type="com.fxyz.chebao.pojo.car.CarBrandTemp" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="letter" property="letter" jdbcType="VARCHAR" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="imgurl" property="imgurl" jdbcType="VARCHAR" />
     <result column="orl" property="orl" jdbcType="VARCHAR" />
   </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
   <sql id="Base_Column_List" >
     id, letter, name, imgurl, orl
   </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.fxyz.chebao.pojo.car.CarBrandTempExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'false' as QUERYID,
+    <include refid="Base_Column_List" />
+    from car_brand_temp
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
@@ -21,13 +65,13 @@
     delete from car_brand_temp
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.fxyz.chebao.pojo.carSpider.CarBrandTemp" >
+  <insert id="insert" parameterType="com.fxyz.chebao.pojo.car.CarBrandTemp" >
     insert into car_brand_temp (id, letter, name, 
       imgurl, orl)
     values (#{id,jdbcType=INTEGER}, #{letter,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
       #{imgurl,jdbcType=VARCHAR}, #{orl,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.fxyz.chebao.pojo.carSpider.CarBrandTemp" >
+  <insert id="insertSelective" parameterType="com.fxyz.chebao.pojo.car.CarBrandTemp" >
     insert into car_brand_temp
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -64,7 +108,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.fxyz.chebao.pojo.carSpider.CarBrandTemp" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.fxyz.chebao.pojo.car.CarBrandTemp" >
     update car_brand_temp
     <set >
       <if test="letter != null" >
@@ -82,7 +126,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.fxyz.chebao.pojo.carSpider.CarBrandTemp" >
+  <update id="updateByPrimaryKey" parameterType="com.fxyz.chebao.pojo.car.CarBrandTemp" >
     update car_brand_temp
     set letter = #{letter,jdbcType=VARCHAR},
       name = #{name,jdbcType=VARCHAR},

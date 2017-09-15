@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.fxyz.chebao.mapper.CarManufacturerTempMapper" >
-  <resultMap id="BaseResultMap" type="com.fxyz.chebao.pojo.carSpider.CarManufacturerTemp" >
+  <resultMap id="BaseResultMap" type="com.fxyz.chebao.pojo.car.CarManufacturerTemp" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="brand_id" property="brandId" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
@@ -20,13 +20,13 @@
     delete from car_manufacturer_temp
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.fxyz.chebao.pojo.carSpider.CarManufacturerTemp" >
+  <insert id="insert" parameterType="com.fxyz.chebao.pojo.car.CarManufacturerTemp" >
     insert into car_manufacturer_temp (id, brand_id, name, 
       orl)
     values (#{id,jdbcType=INTEGER}, #{brandId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
       #{orl,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.fxyz.chebao.pojo.carSpider.CarManufacturerTemp" >
+  <insert id="insertSelective" parameterType="com.fxyz.chebao.pojo.car.CarManufacturerTemp" >
     insert into car_manufacturer_temp
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -57,7 +57,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.fxyz.chebao.pojo.carSpider.CarManufacturerTemp" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.fxyz.chebao.pojo.car.CarManufacturerTemp" >
     update car_manufacturer_temp
     <set >
       <if test="brandId != null" >
@@ -72,7 +72,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.fxyz.chebao.pojo.carSpider.CarManufacturerTemp" >
+  <update id="updateByPrimaryKey" parameterType="com.fxyz.chebao.pojo.car.CarManufacturerTemp" >
     update car_manufacturer_temp
     set brand_id = #{brandId,jdbcType=INTEGER},
       name = #{name,jdbcType=VARCHAR},

@@ -1,7 +1,7 @@
 package com.fxyz.chebao.mapper;
 
-import com.fxyz.chebao.pojo.carSpider.CarSeries;
-import com.fxyz.chebao.pojo.carSpider.CarSeriesExample;
+import com.fxyz.chebao.pojo.car.CarSeries;
+import com.fxyz.chebao.pojo.car.CarSeriesExample;
 import java.util.List;
 
 public interface CarSeriesMapper {

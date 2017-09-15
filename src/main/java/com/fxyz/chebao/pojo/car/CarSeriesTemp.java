@@ -1,4 +1,4 @@
-package com.fxyz.chebao.pojo.carSpider;
+package com.fxyz.chebao.pojo.car;
 
 public class CarSeriesTemp {
     private Integer id;

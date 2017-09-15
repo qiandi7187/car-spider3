@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.fxyz.chebao.mapper.CarSeriesTempMapper" >
-  <resultMap id="BaseResultMap" type="com.fxyz.chebao.pojo.carSpider.CarSeriesTemp" >
+  <resultMap id="BaseResultMap" type="com.fxyz.chebao.pojo.car.CarSeriesTemp" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="manu_id" property="manuId" jdbcType="INTEGER" />
     <result column="imgurl" property="imgurl" jdbcType="VARCHAR" />
@@ -42,7 +42,7 @@
   <sql id="Base_Column_List" >
     id, manu_id, imgurl, price, orl, state, name
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.fxyz.chebao.pojo.carSpider.CarSeriesTempExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.fxyz.chebao.pojo.car.CarSeriesTempExample" >
     select
     <if test="distinct" >
       distinct
@@ -67,7 +67,7 @@
     delete from car_series_temp
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.fxyz.chebao.pojo.carSpider.CarSeriesTemp" >
+  <insert id="insert" parameterType="com.fxyz.chebao.pojo.car.CarSeriesTemp" >
     insert into car_series_temp (id, manu_id, imgurl, 
       price, orl, state, 
       name)
@@ -75,7 +75,7 @@
       #{price,jdbcType=VARCHAR}, #{orl,jdbcType=INTEGER}, #{state,jdbcType=VARCHAR}, 
       #{name,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.fxyz.chebao.pojo.carSpider.CarSeriesTemp" >
+  <insert id="insertSelective" parameterType="com.fxyz.chebao.pojo.car.CarSeriesTemp" >
     insert into car_series_temp
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -124,7 +124,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.fxyz.chebao.pojo.carSpider.CarSeriesTemp" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.fxyz.chebao.pojo.car.CarSeriesTemp" >
     update car_series_temp
     <set >
       <if test="manuId != null" >
@@ -148,7 +148,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.fxyz.chebao.pojo.carSpider.CarSeriesTemp" >
+  <update id="updateByPrimaryKey" parameterType="com.fxyz.chebao.pojo.car.CarSeriesTemp" >
     update car_series_temp
     set manu_id = #{manuId,jdbcType=INTEGER},
       imgurl = #{imgurl,jdbcType=VARCHAR},

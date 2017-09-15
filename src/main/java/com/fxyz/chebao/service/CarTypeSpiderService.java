@@ -3,7 +3,7 @@ package com.fxyz.chebao.service;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fxyz.chebao.mapper.*;
-import com.fxyz.chebao.pojo.carSpider.*;
+import com.fxyz.chebao.pojo.car.*;
 import com.util.HttpUtil;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -363,6 +363,15 @@ public class CarTypeSpiderService {
     }
 
 
+
+    public List<CarBrandTemp> getAllBrandTemp(){
+        CarBrandTempExample all = new CarBrandTempExample();
+        List<CarBrandTemp> brands = brandTempMapper.selectByExample(all);
+        return  brands;
+    }
+
+
+
     public List<CarSeries> getAllSeries(){
         CarSeriesExample all = new CarSeriesExample();
         List<CarSeries> series = carSeriesMapper.selectByExample(all);
@@ -378,7 +387,7 @@ public class CarTypeSpiderService {
     }
 
 
-    public void copySeriesUrlById(String filepath,String filename ,String imgurl){
+    public void translateImgUrlToFile(String filepath, String filename , String imgurl){
         //int SeriesId = 18;
         //String filepath="D:\\imgs";
         //String imgurl = "http://car3.autoimg.cn/cardfs/product/g12/M0C/B2/CC/t_autohomecar__wKjBy1g9Va2AS7MbAAuBAsvFEvg627.jpg";
@@ -392,6 +401,11 @@ public class CarTypeSpiderService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void updateBrandByPrimaryKey(CarBrandTemp brand){
+        brandTempMapper.updateByPrimaryKey(brand);
+        return;
     }
 
 
